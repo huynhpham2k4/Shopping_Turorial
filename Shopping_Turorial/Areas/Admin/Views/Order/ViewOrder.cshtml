@@ -1,0 +1,131 @@
+﻿@model IEnumerable<OrderDetail>
+@{
+	ViewData["title"] = "Order Details";
+	decimal total = 0;//store total amout
+	decimal subtotal = 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<title> Order Detail</title>
+</head>
+<body>
+	<h3>List OrderDetail</h3>
+	<table class="table" id="detail_order">
+		<thead>
+			<tr>
+				<th scope="col">Id</th>
+				<th scope="col">UserName</th>
+				<th scope="col">OrderCode</th>
+				<th scope="col">Name</th>
+				<th scope="col">Price</th>
+				<th scope="col">Quantity</th>
+				<th scope="col">Subtotal</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				subtotal = item.Quantity * item.Price; // so luong nhan gia cua sp
+				total += subtotal;
+				<tr>
+					<input type="hidden" asp-for="@item.OrderCode" class="getId" />
+					<td scope="row">@item.Id</td>
+					<td scope="row">@item.UserName</td>
+					<td scope="row">@item.OrderCode</td>
+					<td scope="row">@item.Product.Name</td>
+					<td scope="row">@item.Price.ToString("#,##0 VND")</td>
+					<td scope="row">@item.Quantity</td>▐
+					<td scope="row">@subtotal.ToString("#,##0 VND")</td>▐
+				</tr>
+			}
+			<tr>
+				<th>Total:</th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<td>@total.ToString("#,##0 VND")</td>
+				<td>Shipping Cost: @ViewBag.ShippingCost.ToString("#,##0 VND") </td>
+
+				@if (ViewBag.Status != 3)
+				{
+					@if (ViewBag.Status == 1)
+					{
+						<td>
+							<select class="form-control select-update-order" id="order-status">
+								<option selected value="1">Đơn hàng mới</option>
+								<option value="2">Đã xử lý</option>
+							</select>
+						</td>
+					}
+					else
+					{
+						<td>
+							<select class="form-control select-update-order" id="order-status">
+								<option value="1">Đơn hàng mới</option>
+								<option selected value="2">Đã xử lý</option>
+							</select>
+						</td>
+					}
+					
+				}
+				else
+				{
+					<td>
+						<spant class="text text-danger">Đã hủy</spant>
+					</td>
+				}
+
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
+
+
+@section Scripts {
+	<script>
+
+		new DataTable('#detail_order', {
+			layout: {
+				topStart: {
+					buttons: ['pdf', 'print']
+				}
+			}
+		});
+
+		$(document).ready(function () {
+			// Set initial value for the select based on ViewBag.Status
+			var initialStatus = '@ViewBag.Status'; // Pass the value from the server
+
+			// Handle change event on .select-update-order
+			$('.select-update-order').change(function () {
+				var status = $(this).val();
+				var ordercode = $('.getId').val();
+
+				alert(ordercode); // Debugging alert to show the order code
+
+				$.ajax({
+					type: "POST",
+					url: "@Url.Action("UpdateOrder")",
+					data: { status: status, ordercode: ordercode }, // Send data to the server
+
+					success: function (result) {
+						// Handle successful update
+						if (result.success) {
+							Swal.fire("Cập nhật đơn hàng thành công");
+						} else {
+							// Handle failure with a message
+							Swal.fire("Cập nhật đơn hàng thất bại: " + result.message);
+						}
+					},
+					error: function (req, status, error) {
+						console.error("Error updating order:", error);
+					}
+				});
+			});
+		});
+	</script>
+}

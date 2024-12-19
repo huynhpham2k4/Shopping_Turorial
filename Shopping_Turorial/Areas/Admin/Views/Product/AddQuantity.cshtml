@@ -1,0 +1,61 @@
+﻿ @model ProductQuantityModel
+@{
+	ViewData["title"] = "Create product quantity";
+	var total_quantities = 0;
+	var key = 1;
+}
+<h4>Create Quantity</h4>
+<div class="col-md-9">
+	<form asp-action="StoreProductQuantity" asp-controller="Product" enctype="multipart/form-data">
+		<input type="hidden" name="ProductId" value="@ViewBag.Id" />
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="form-group">
+			<label>Name</label>
+			<input min="1" value="1" max="2000" asp-for="Quantity" class="form-control" />
+			<span asp-validation-for="Quantity" class="text-danger" />
+		</div>
+
+
+		<div class="form-group">
+			<button class="btn btn-primary">Create</button>
+		</div>
+	</form>
+	<h3>Existing product quantity</h3>
+	<table class="table table-sciped">
+		<thead>
+			<tr>
+				<th>Key</th>
+				<th>Quantity add</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var productQuantity in ViewBag.ProductByQuantity)
+			{
+				total_quantities += productQuantity.Quantity;
+				<tr>
+					<td>@key</td>
+					<td>@productQuantity.Quantity</td>
+					<td>@productQuantity.DateCreated</td>
+				</tr>
+				key++;
+			}
+			<tr>
+				<td><b>Total quantity: </b></td>
+				<td><b>@total_quantities</b></td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+	<a asp-action="Index">Back to list Product</a>
+</div>
+
+@section Scripts
+{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
+
+
+

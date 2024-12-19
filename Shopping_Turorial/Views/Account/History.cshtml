@@ -1,0 +1,56 @@
+﻿@model IEnumerable<OrderModel>
+@{
+	ViewData["title"] = "List history Orders placed by " + @ViewBag.UserEmail;
+}
+<h3>List history Orders placed by @ViewBag.UserEmail</h3>
+<table class="table" id="myTable">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">Order Code</th>
+			<th scope="col">Shipping Cost</th>
+			<th scope="col">Coupon Cost</th>
+			<th scope="col">User Name</th>
+			<th scope="col">Created Date</th>
+			<th scope="col">Status </th>
+			<th scope="col">Action </th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<th>@item.Id</th>
+				<td>@item.OrderCode</td>
+				<td>@item.ShippingCost.ToString("#,##0 VND")</td>
+				<td>@item.CouponCode</td>
+				<td>@item.UserName</td>
+				<td>@item.CreatedDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+				<td>
+					@if (item.Status == 1)
+					{
+						<span class="text text-success">đơn hàng mới</span>
+					}
+					else if (item.Status == 2)
+					{
+						<span class="text text-primary">Đã xử lý</span>
+					}
+					else
+					{
+						<spant class="text text-danger">Đã hủy</spant>
+					}
+				</td>
+				<td>
+					@if (item.Status == 1)
+					{
+						<a asp-action="CancelOrder" class="btn btn-danger btn-sm" onclick="return confirm('Bạn xác nhận hủy đơn?')" asp-controller="Account" asp-route-ordercode="@item.OrderCode">Cancel Order</a>
+					}
+					@if (item.Status == 2)
+					{
+						<a asp-action="CancelOrder" onclick="return false;" class="btn btn-warning btn-sm " asp-controller="Account" asp-route-ordercode="@item.OrderCode">Cancel Order</a>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

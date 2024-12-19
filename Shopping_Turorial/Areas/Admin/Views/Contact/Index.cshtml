@@ -1,0 +1,50 @@
+﻿@model IEnumerable<ContactModel>
+@{
+	ViewData["title"] = "Contact Listed";
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="index" content="width=device-width" />
+	<title> list Contact</title>
+</head>
+<body>
+
+	<h3>List Product</h3>
+	<table class="table" id="myTable">
+		<thead>
+			<tr>
+				<th scope="col">Product Name</th>
+				<th scope="col">Product Map</th>
+				<th scope="col">Product Email</th>
+				<th scope="col">Product Phone </th>
+				<th scope="col">Product Description</th>
+				<th scope="col">Product LogoImg</th>
+				<th scope="col">Action </th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<th scope="row">@item.Name</th>
+					<td>@Html.Raw(item.Map)</td>
+					<td>@item.Email</td>
+					<th>@item.Phone</th>
+					<th>@item.Description</th>
+					<td> <img src="~/media/logo/@item.LogoImg" width="120px" height="120px"></td>
+					<td>
+						<a asp-action="Edit" class="btn btn-warning btn-sm " asp-controller="Contact">Edit</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</body>
+@section scripts {
+	<script>
+		let table = new DataTable('#myTable');
+	</script>
+}
+</html>
+
