@@ -26,6 +26,7 @@ namespace Shopping_Tutorial.Repository
 		public DbSet<ProductQuantityModel> productQuantities { get; set; }
 		public DbSet<ShippingModel> Shippings { get; set; }
 		public DbSet<CouponModel> Coupons { get; set; }
+		public DbSet<StatisticalModel> Statisticals { get; set; }
 	}
 
 }

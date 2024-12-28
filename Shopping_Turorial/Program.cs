@@ -55,18 +55,24 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 //Congiguration Login Google Account
-builder.Services.AddAuthentication(options =>
-{
-	options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//builder.Services.AddAuthentication(options =>
+//{
+//	options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-}).AddCookie().AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+//}).AddCookie().AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+//{
+//	options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientID").Value;
+//	options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+//});
+////---Congiguration Login Google Account
+
+builder.Services.AddLogging(logging =>
 {
-	options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientID").Value;
-	options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+	logging.AddConsole();
+	logging.AddDebug();
 });
-//---Congiguration Login Google Account
 
 var app = builder.Build();
 

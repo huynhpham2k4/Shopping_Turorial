@@ -278,6 +278,7 @@ namespace Shopping_Tutorial.Controllers
 			});
 			TempData["success"] = "Dang nhap thanh cong";
 			return RedirectToAction("Index", "Home");
+			return Json(claims);
 		}
 
 	}

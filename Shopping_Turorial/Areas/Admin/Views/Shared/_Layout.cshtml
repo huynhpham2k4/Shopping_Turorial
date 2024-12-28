@@ -9,6 +9,7 @@
 	<link href="~/css/bootstrap.min.css" rel="stylesheet ">
 	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.4/dist/sweetalert2.min.css" rel="stylesheet">
 	<link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 	<link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css" rel="stylesheet">
 	<link href="~/css/font-awesome.min.css" rel="stylesheet">
 	<link href="~/css/prettyPhoto.css" rel="stylesheet">
@@ -69,6 +70,7 @@
 						<div class="main menu pull-left">
 							<ul class="nav navbar-nav collapse navbar-collapse ">
 								<li><a asp-action="Index" asp-controller="Home" class="active">Home</a></li>
+								<li><a asp-action="Index" asp-controller="Dashboard" class="active">Dashboard</a></li>
 								<li><a asp-action="Index" asp-controller="Slider"> Sliders</a></li>
 								<li><a asp-action="Index" asp-controller="Product"> Products</a></li>
 								<li><a asp-action="Index" asp-controller="Shipping"> Shippings</a></li>
@@ -133,6 +135,8 @@
 	<script src="~/js/main.js"></script>
 	<script src="~/backend/js/site.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.4/dist/sweetalert2.all.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 	<script>
 		$(function () {
 			var message = '@TempData["success"]';

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<BrandModel>
+@{
+	ViewData["title"] = "Dashboard";
+}
+
+<h3>Dashboard Statistic</h3>
+<h3>Dashboard Statistic 1</h3>
+<h3>Dashboard Statistic 2</h3>
+<div>
+	<div class="row">
+		<div class="col-md-3">
+			<p>Thống kê sản phẩm</p>
+			@ViewBag.CountProduct
+		</div>
+		<div class="col-md-3">
+			<p>Thống kê đơn hàng</p>
+			@ViewBag.CountOrder
+		</div>
+		<div class="col-md-3">
+			<p>Thống kê danh mục</p>
+			@ViewBag.CountCategory
+		</div>
+		<div class="col-md-3">
+			<p>Thống kê user</p>
+			@ViewBag.CountUser
+		</div>
+	</div>
+
+	<div class="row">
+		<p>Biểu đồ thống kê</p>
+		<div id="myfirstchart" style="height: 250px;"></div>
+	</div>
+</div>
+@section Scripts {
+	<script>
+		$(document).ready(function () {
+			$.ajax({
+				url: "@Url.Action("GetChartData", "Dashboard")",
+				type: "POST",
+				dataType: "json",
+				success: function (data) {
+					// Process the retrieved data
+					var chartData = data.map(function (item) {
+						return {
+							date: item.date,
+							sold: item.sold,
+							quantity: item.quantity,
+							revenue: item.revenue,
+							profit: item.profit
+						};
+					});
+					//chart Moorris
+					new Morris.Line({
+						element: 'myfirstchart',
+						data: chartData,
+						xkey: 'date',// truc tung
+						xLabelFormat: function (x) {
+							return new Date(x).toLocaleDateString();
+						},
+						ykeys: ['sold', 'quantity', 'revenue', 'profit'],// truc hoanh
+						labels: ["Số lượng bán ra", "Đơn hàng", "Doanh thu", "Lợi nhuận"]
+					});
+				},
+				error: function (error) {
+					console.error("Error fetching data:", error);
+				}
+			})
+		})
+	</script>
+}
