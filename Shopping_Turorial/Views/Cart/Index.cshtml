@@ -101,7 +101,6 @@
 									</div>
 									<button type="button" class="btn btn-default btn-add-shipping">Tinh phi ship</button>
 								</div>
-
 							</td>
 							<td>
 								<a class="btn  btn-danger btn-sm" asp-controller="Cart" asp-action="Clear"> Clear </a>
@@ -109,13 +108,22 @@
 								{
 									if (Model.ShippingCost <= 0)
 									{
-										<a disabled="disabled" onclick="return confirm('Bạn xác nhận đặt hàng?')" class="btn btn-warning btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a>
+										<a disabled onclick="return confirm('Bạn xác nhận đặt hàng?')" class="btn btn-warning btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a>
 										<p class="text text-danger">Yeu cau tinh phi van chuyen truoc khi dat hang</p>
 									}
 									else
 									{
-										<a class="btn btn-warning btn-sm" asp-controller="Checkout" asp-action="Checkout"> Checkout </a>
+										<a class="btn btn-warning btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a>
 									}
+									<div style="margin-top: 12px;">
+										<form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
+											<input type="hidden" name="Amount" value="@Model.GrandTotal" />
+											<input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+											<input type="hidden" name="OrderInfo" value="Thanh toan momo cho don hang tai HuynhStore" />
+											<input type="hidden" name="FullName" value="HuynhStore" />
+											<button class="btn btn-danger" disabled name="PayUrl" type="submit">Pay with MoMo</button>
+										</form>
+									</div>
 								}
 							</td>
 
@@ -142,7 +150,7 @@
 			var coupon_value = $('.coupon-value').val();
 			//alert(coupon_value)
 			$.ajax({
-				type:"POST",
+				type: "POST",
 				url: "@Url.Action("GetCoupon", "Cart")",
 				data: { coupon_value: coupon_value },
 				success: function (result) {

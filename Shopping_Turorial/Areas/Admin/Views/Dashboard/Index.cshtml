@@ -1,11 +1,9 @@
-﻿@model IEnumerable<BrandModel>
+﻿@model StatisticalModel
 @{
 	ViewData["title"] = "Dashboard";
 }
 
 <h3>Dashboard Statistic</h3>
-<h3>Dashboard Statistic 1</h3>
-<h3>Dashboard Statistic 2</h3>
 <div>
 	<div class="row">
 		<div class="col-md-3">
@@ -26,45 +24,151 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<p>Biểu đồ thống kê</p>
-		<div id="myfirstchart" style="height: 250px;"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<h4>Lọc dữ liệu theo</h4>
+				<select class="filter_select">
+					<option value="30">---Lọc dữ liệu---</option>
+					<option value="7">7 ngày trước</option>
+					<option value="30">tháng qua</option>
+					<option value="90">3 tháng trước</option>
+					<option value="365">1 năm</option>
+				</select>
+			</div>
+
+			<div class="col-md-3">
+				<h4>Tùy chọn:</h4>
+				<label>Từ ngày</label>
+				<input type="date" class="form-control" id="date_from" asp-for="@Model.DateCreate" />
+				<label>Đến ngày</label>
+				<input type="date" class="form-control" id="date_to" asp-for="@Model.DateCreate" />
+				<button id="filterButton" class="btn btn-primary">Filter</button>
+			</div>
+		</div>
+		<div class="row">
+			<h4>Biểu đồ thống kê</h4>
+			<div id="myfirstchart" style="height: 250px;">
+			</div>
+		</div>
 	</div>
+
 </div>
 @section Scripts {
 	<script>
 		$(document).ready(function () {
+
+			var ChartMorris = new Morris.Line({
+				element: 'myfirstchart',
+				// Move data processing inside the success callback
+				data: [],
+				xkey: 'date',// truc hoanh
+
+				ykeys: ['sold', 'quantity', 'revenue', 'profit'],// truc tung
+				labels: ["Số lượng bán ra", "Đơn hàng", "Doanh thu", "Lợi nhuận"]
+			});
+
 			$.ajax({
 				url: "@Url.Action("GetChartData", "Dashboard")",
 				type: "POST",
 				dataType: "json",
 				success: function (data) {
-					// Process the retrieved data
-					var chartData = data.map(function (item) {
-						return {
-							date: item.date,
-							sold: item.sold,
-							quantity: item.quantity,
-							revenue: item.revenue,
-							profit: item.profit
-						};
-					});
-					//chart Moorris
-					new Morris.Line({
-						element: 'myfirstchart',
-						data: chartData,
-						xkey: 'date',// truc tung
-						xLabelFormat: function (x) {
-							return new Date(x).toLocaleDateString();
-						},
-						ykeys: ['sold', 'quantity', 'revenue', 'profit'],// truc hoanh
-						labels: ["Số lượng bán ra", "Đơn hàng", "Doanh thu", "Lợi nhuận"]
-					});
+					if (data) {
+						// Process the retrieved data
+						ChartMorris.setData(data.map(function (item) {
+							return {
+								date: item.date,
+								sold: item.sold,
+								quantity: item.quantity,
+								revenue: item.revenue,
+								profit: item.profit
+							};
+						}));
+						//chart Moorris
+					}
+					else {
+						console.warn("No data received for Morris chart update.");
+						ChartMorris.setData([]);
+					}
 				},
 				error: function (error) {
 					console.error("Error fetching data:", error);
 				}
+			});
+
+			$('.filter_select').on('change', function () {
+				var days = $(this).val();
+				var endDate = new Date();
+				var startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
+				// alert(startDate);
+				// alert(endDate);
+				$.ajax({
+					url: "@Url.Action("GetChartDataBySelect", "Dashboard")",
+					type: "POST",
+					dataType: "json",
+					data: {
+						// tham so gui qua
+						startDate: startDate.toISOString().split('T')[0],
+						endDate: endDate.toISOString().split('T')[0]
+					},
+					success: function (data) {
+						if (data) {
+							ChartMorris.setData(data.map(function (item) {
+								return {
+									date: item.date,
+									sold: item.sold,
+									quantity: item.quantity,
+									revenue: item.revenue,
+									profit: item.profit
+								};
+							}));
+							// chart Moorris
+						}
+						else {
+							console.warn("No data received for Morris chart update.");
+							ChartMorris.setData([]);
+							alert('Khong co du lieu')
+						}
+					},
+					error: function (error) {
+						console.error("Error fetching data:", error);
+						alert('Khong co du lieu')
+					}
+				});
 			})
+
+			$("#filterButton").click(function () {
+				var fromDate = $("#date_from").val();
+				var toDate = $("#date_to").val();
+
+				$.ajax({
+					url: "@Url.Action("FilterData", "Dashboard")",
+					data: { fromDate: fromDate, toDate: toDate },
+					type: "POST",
+					dataType: "json",
+					success: function (data) {
+						if (data) {
+							ChartMorris.setData(data.map(function (item) {
+								return {
+									date: item.date,
+									sold: item.sold,
+									quantity: item.quantity,
+									revenue: item.revenue,
+									profit: item.profit
+								};
+							}));
+							// chart Moorris
+						}
+						else {
+							console.warn("No data received for Morris chart update.");
+							ChartMorris.setData([]);
+						}
+					},
+					error: function (error) {
+						console.error("Error fetching data:", error);
+					}
+				});
+			});
 		})
 	</script>
 }

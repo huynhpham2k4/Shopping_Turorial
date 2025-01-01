@@ -4,15 +4,20 @@ using Microsoft.AspNetCore.Identity;
 using Shopping_Tutorial.Models;
 using System.Xml;
 using Shopping_Tutorial.Areas.Admin.Repository;
-using Shopping_Tutorial.Areas.Admin.Repository;
 using System.Runtime;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Shopping_Tutorial.Models.Momo;
+using Shopping_Tutorial.Services.Momo;
 
 
 //builder la Add, con app la Use
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Connect MomoAPI
+builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
+builder.Services.AddScoped<IMomoService, MomoService>();
 
 //Connection db
 builder.Services.AddDbContext<Datacontext>(option =>
@@ -34,6 +39,7 @@ builder.Services.AddSession(option =>
 	option.IdleTimeout = TimeSpan.FromSeconds(30);
 	option.Cookie.IsEssential = true;
 });// phai dat tren build
+
 
 
 //username & pasaord
@@ -76,16 +82,16 @@ builder.Services.AddLogging(logging =>
 
 var app = builder.Build();
 
-app.UseStatusCodePagesWithRedirects("/Home/Error?statuscode={0}");
+//app.UseStatusCodePagesWithRedirects("/Home/Error?statuscode={0}");
 
 app.UseSession();
 
 
 // Configure the HTTP request pipeline.s
-if (!app.Environment.IsDevelopment())
-{
-	app.UseExceptionHandler("/Home/Error");
-}
+//if (!app.Environment.IsDevelopment())
+//{
+//	app.UseExceptionHandler("/Home/Error");
+//}
 
 
 app.UseStaticFiles();
